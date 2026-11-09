@@ -60,6 +60,11 @@ function timeline(history, id, at) {
 // - { outcome: 'ambiguous' }  if the log shows the key retired or the DID deactivated,
 //   at any time: the claimed issued_at alone cannot place the signature on either
 //   side of that boundary (#177, comment 6747421782).
+//
+// That rule holds because no case carries independent evidence of the signing time.
+// With acceptable evidence (a timestamp, a transparency-log entry), a verifier could
+// place the signature and decide whether the key was authorized (#177, comment
+// 6752140683). This pin set does not exercise that.
 
 function apsResolution(history, id, issuedAt) {
   const appearances = history.entries.map((e) => Boolean(methodOf(e.state, id)));

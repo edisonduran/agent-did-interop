@@ -1,6 +1,6 @@
 # APS `AuthorityDelegationV1` × Agent-DID `did:webvh` issuers
 
-**Status: draft.** Cases 1–7 are agreed in [aeoess/agent-governance-vocabulary#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177). Case 8 is proposed and not yet confirmed.
+**Status: draft, waiting for the APS author to review the APS column.** All eight cases are agreed in [aeoess/agent-governance-vocabulary#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177). The results below come from the Agent-DID maintainer's run. They do not count as the agreed run until both maintainers have reviewed this directory.
 
 ## Pins
 
@@ -37,7 +37,7 @@ A valid APS chain alone doesn't show that the DID authorized the key for delegat
 `VerificationKeyResolver` is synchronous in 8.0.1, so each answer is computed before the APS call, from the issuer's log verified with `resolveDidWebvhLog`. The resolver does not apply the Agent-DID relationship rule:
 
 - `{ outcome: 'not_found' }` if the key never appears in the issuer's log.
-- `{ outcome: 'ambiguous' }` if the log shows the key retired, or the DID deactivated, at any time. The claimed `issued_at` alone cannot place the signature on either side of that boundary (§3.4).
+- `{ outcome: 'ambiguous' }` if the log shows the key retired, or the DID deactivated, at any time. The claimed `issued_at` alone cannot place the signature on either side of that boundary (§3.4). That holds here because no case carries independent evidence of the signing time. With acceptable evidence, such as a timestamp or a transparency-log entry, a verifier could place the signature and decide whether the key was authorized ([#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6752140683)).
 - Otherwise, the Ed25519 key from the DID state at `issued_at`, decoded from `publicKeyMultibase` to 64 hex characters.
 
 Other options: `now` is `2026-11-01T00:00:00.000Z`, `trustRoot` accepts the case's issuer DID, and `resolveRevocation` returns `active`.
@@ -63,7 +63,7 @@ The Agent-DID column does not check the APS signature. That is APS's check.
 | 5 | Key retired before `issued_at` | indeterminate, `KEY_AMBIGUOUS` | rejected: key not in the DID state at `issued_at` |
 | 6 | Key retired after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | indeterminate: signing time not established |
 | 7 | DID deactivated after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | indeterminate: signing time not established |
-| 8 *(proposed)* | Key never listed in the issuer's DID | indeterminate, `KEY_NOT_FOUND` | rejected: key not in the DID state at `issued_at` |
+| 8 | Key never listed in the issuer's DID | indeterminate, `KEY_NOT_FOUND` | rejected: key not in the DID state at `issued_at` |
 
 These are the results of `npm test` with the pins above, and they match the expected results in `cases.json`. `results.json` holds the full output.
 
@@ -80,6 +80,7 @@ Notes on the cases:
 
 - Delegation chains longer than one record. Every case is a root that the trust policy accepts.
 - Revocation. `resolveRevocation` always returns `active`.
+- Signing-time evidence. No case carries a timestamp or transparency-log entry, so a key retirement or a DID deactivation is never resolved in either direction.
 - Any APS implementation other than the TypeScript 8.0.1 package.
 - The Agent-DID Python SDK.
 - Fetching logs over HTTPS. Logs are read from files.

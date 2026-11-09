@@ -8,7 +8,8 @@
   "verification_options": {
     "now": "2026-11-01T00:00:00.000Z",
     "trust_root": "the root's issuer is the case's issuer DID",
-    "resolve_revocation": "active for every record"
+    "resolve_revocation": "active for every record",
+    "signing_time_evidence": "none: no case carries a timestamp or transparency-log entry for the signing time"
   },
   "results": [
     {
@@ -214,7 +215,7 @@
     {
       "id": "case-8",
       "title": "Key never listed in the issuer's DID",
-      "status": "proposed",
+      "status": "agreed",
       "aps": {
         "state": "indeterminate",
         "codes": [

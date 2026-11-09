@@ -8,7 +8,8 @@
   "verification_options": {
     "now": "2026-11-01T00:00:00.000Z",
     "trust_root": "the root's issuer is the case's issuer DID",
-    "resolve_revocation": "active for every record"
+    "resolve_revocation": "active for every record",
+    "signing_time_evidence": "none: no case carries a timestamp or transparency-log entry for the signing time"
   },
   "cases": [
     {
@@ -95,8 +96,8 @@
     {
       "id": "case-8",
       "title": "Key never listed in the issuer's DID",
-      "status": "proposed",
-      "note": "Proposed in #177 (comment 6751947600) so that KEY_NOT_FOUND stays exercised; not yet confirmed by the APS author.",
+      "status": "agreed",
+      "note": "Added in #177 (comments 6751947600, 6752140683) so that KEY_NOT_FOUND stays exercised: the key never appears in the issuer's authoritative key history.",
       "issuer_log": "logs/relationships.did.jsonl",
       "delegation": "delegations/case-8.json",
       "expected": {
