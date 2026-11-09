@@ -1,0 +1,42 @@
+{
+  "record_type": "aps:authority-delegation:v1",
+  "version": "1.0",
+  "parent_delegation_id": null,
+  "issuer": "did:webvh:QmSExkCyEZZFrYH1HBA4nBmrWZabxmvGxgBtC8DHDVT5rZ:issuers.interop.example:relationships",
+  "subject": "did:web:subject.interop.example",
+  "verification_method": "did:webvh:QmSExkCyEZZFrYH1HBA4nBmrWZabxmvGxgBtC8DHDVT5rZ:issuers.interop.example:relationships#unlisted",
+  "issued_at": "2026-02-01T00:00:00.000Z",
+  "nonce": "c6bc703ae862559ef87215960952220b",
+  "authority": {
+    "scope": {
+      "profile": "aps-hierarchical-v1",
+      "grants": [
+        "interop:read"
+      ]
+    },
+    "spend": {
+      "mode": "unbounded"
+    },
+    "depth": {
+      "remaining": 0
+    },
+    "time": {
+      "not_before": "2026-02-01T00:00:00.000Z",
+      "not_after": "2027-12-31T00:00:00.000Z"
+    },
+    "reputation": {
+      "profile": "aps-score-0-100-v1",
+      "ceiling": 100
+    },
+    "values": {
+      "profile": "aps-values-identifiers-v1",
+      "required": []
+    },
+    "reversibility": {
+      "profile": "aps-tci-v1",
+      "ceiling": "tentative"
+    }
+  },
+  "delegation_id": "sha256:e97aa9e5de9116ea5ea3c3b0093484dd1e356cd30c23e1ce6f193a25352c0b2c",
+  "signature": "90f5c5f77e1dfbc824be68a03e70e055457bee041541006d90302f98fe677d4b6f868143c3bbf1125a5f5452c0628f50948870873611a5b0eb45eac3575e9502"
+}

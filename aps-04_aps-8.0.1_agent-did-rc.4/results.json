@@ -1,0 +1,245 @@
+{
+  "pins": {
+    "aps_spec": "draft-pidlisnyi-aps-04 §4.1-4.3 (AuthorityDelegationV1), §3.4 for the key-validity boundary",
+    "aps_implementation": "agent-passport-system 8.0.1 (TypeScript)",
+    "agent_did_implementation": "@agentdid/sdk 1.0.0-rc.4 (TypeScript)",
+    "agent_did_rule": "The key named in verification_method is listed under capabilityDelegation in the issuer's DID document at issued_at (RFC-001 §6.2.1)"
+  },
+  "verification_options": {
+    "now": "2026-11-01T00:00:00.000Z",
+    "trust_root": "the root's issuer is the case's issuer DID",
+    "resolve_revocation": "active for every record"
+  },
+  "results": [
+    {
+      "id": "case-1",
+      "title": "Key only under capabilityDelegation",
+      "status": "agreed",
+      "aps": {
+        "state": "valid",
+        "codes": [],
+        "resolver_answer": "key",
+        "expected": {
+          "state": "valid"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "authorized",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog",
+          "state_at_issued_at": "sdk: resolveDidWebvhLog({ versionTime: issued_at })",
+          "relationship": "sdk: assertKeyPurpose(capabilityDelegation)",
+          "later_boundary": "fixture: later log entry retires the key or deactivates the DID"
+        },
+        "expected": {
+          "result": "authorized"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-2",
+      "title": "Key only under assertionMethod",
+      "status": "agreed",
+      "aps": {
+        "state": "valid",
+        "codes": [],
+        "resolver_answer": "key",
+        "expected": {
+          "state": "valid"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "rejected",
+        "reason": "wrong_relationship",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog",
+          "state_at_issued_at": "sdk: resolveDidWebvhLog({ versionTime: issued_at })"
+        },
+        "expected": {
+          "result": "rejected",
+          "reason": "wrong_relationship"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-3",
+      "title": "Key only under keyAgreement",
+      "status": "agreed",
+      "aps": {
+        "state": "valid",
+        "codes": [],
+        "resolver_answer": "key",
+        "expected": {
+          "state": "valid"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "rejected",
+        "reason": "wrong_relationship",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog",
+          "state_at_issued_at": "sdk: resolveDidWebvhLog({ versionTime: issued_at })"
+        },
+        "expected": {
+          "result": "rejected",
+          "reason": "wrong_relationship"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-4",
+      "title": "Delegation modified after signing (scope changed, delegation_id recomputed)",
+      "status": "agreed",
+      "aps": {
+        "state": "invalid",
+        "codes": [
+          "SIGNATURE_INVALID"
+        ],
+        "resolver_answer": "key",
+        "expected": {
+          "state": "invalid"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "not_exercised",
+        "expected": {
+          "result": "not_exercised"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-5",
+      "title": "Key retired before issued_at",
+      "status": "agreed",
+      "aps": {
+        "state": "indeterminate",
+        "codes": [
+          "KEY_AMBIGUOUS"
+        ],
+        "resolver_answer": "ambiguous",
+        "control_with_listed_key": "valid",
+        "expected": {
+          "state": "indeterminate",
+          "code": "KEY_AMBIGUOUS"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "rejected",
+        "reason": "key_not_in_did_state",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog"
+        },
+        "expected": {
+          "result": "rejected",
+          "reason": "key_not_in_did_state"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-6",
+      "title": "Key retired after issued_at",
+      "status": "agreed",
+      "aps": {
+        "state": "indeterminate",
+        "codes": [
+          "KEY_AMBIGUOUS"
+        ],
+        "resolver_answer": "ambiguous",
+        "control_with_listed_key": "valid",
+        "expected": {
+          "state": "indeterminate",
+          "code": "KEY_AMBIGUOUS"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "indeterminate",
+        "reason": "signing_time_not_established",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog",
+          "state_at_issued_at": "sdk: resolveDidWebvhLog({ versionTime: issued_at })",
+          "relationship": "sdk: assertKeyPurpose(capabilityDelegation)",
+          "later_boundary": "fixture: later log entry retires the key or deactivates the DID"
+        },
+        "expected": {
+          "result": "indeterminate",
+          "reason": "signing_time_not_established"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-7",
+      "title": "DID deactivated after issued_at",
+      "status": "agreed",
+      "aps": {
+        "state": "indeterminate",
+        "codes": [
+          "KEY_AMBIGUOUS"
+        ],
+        "resolver_answer": "ambiguous",
+        "control_with_listed_key": "valid",
+        "expected": {
+          "state": "indeterminate",
+          "code": "KEY_AMBIGUOUS"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "indeterminate",
+        "reason": "signing_time_not_established",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog",
+          "state_at_issued_at": "sdk: resolveDidWebvhLog({ versionTime: issued_at })",
+          "relationship": "sdk: assertKeyPurpose(capabilityDelegation)",
+          "later_boundary": "fixture: later log entry retires the key or deactivates the DID"
+        },
+        "expected": {
+          "result": "indeterminate",
+          "reason": "signing_time_not_established"
+        },
+        "matches_expected": true
+      }
+    },
+    {
+      "id": "case-8",
+      "title": "Key never listed in the issuer's DID",
+      "status": "proposed",
+      "aps": {
+        "state": "indeterminate",
+        "codes": [
+          "KEY_NOT_FOUND"
+        ],
+        "resolver_answer": "not_found",
+        "control_with_listed_key": "no_listed_key",
+        "expected": {
+          "state": "indeterminate",
+          "code": "KEY_NOT_FOUND"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "rejected",
+        "reason": "key_not_in_did_state",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog"
+        },
+        "expected": {
+          "result": "rejected",
+          "reason": "key_not_in_did_state"
+        },
+        "matches_expected": true
+      }
+    }
+  ]
+}

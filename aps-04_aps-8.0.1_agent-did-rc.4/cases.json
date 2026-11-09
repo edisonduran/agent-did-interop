@@ -1,0 +1,108 @@
+{
+  "pins": {
+    "aps_spec": "draft-pidlisnyi-aps-04 §4.1-4.3 (AuthorityDelegationV1), §3.4 for the key-validity boundary",
+    "aps_implementation": "agent-passport-system 8.0.1 (TypeScript)",
+    "agent_did_implementation": "@agentdid/sdk 1.0.0-rc.4 (TypeScript)",
+    "agent_did_rule": "The key named in verification_method is listed under capabilityDelegation in the issuer's DID document at issued_at (RFC-001 §6.2.1)"
+  },
+  "verification_options": {
+    "now": "2026-11-01T00:00:00.000Z",
+    "trust_root": "the root's issuer is the case's issuer DID",
+    "resolve_revocation": "active for every record"
+  },
+  "cases": [
+    {
+      "id": "case-1",
+      "title": "Key only under capabilityDelegation",
+      "status": "agreed",
+      "issuer_log": "logs/relationships.did.jsonl",
+      "delegation": "delegations/case-1.json",
+      "expected": {
+        "aps": { "state": "valid" },
+        "agent_did": { "result": "authorized" }
+      }
+    },
+    {
+      "id": "case-2",
+      "title": "Key only under assertionMethod",
+      "status": "agreed",
+      "issuer_log": "logs/relationships.did.jsonl",
+      "delegation": "delegations/case-2.json",
+      "expected": {
+        "aps": { "state": "valid" },
+        "agent_did": { "result": "rejected", "reason": "wrong_relationship" }
+      }
+    },
+    {
+      "id": "case-3",
+      "title": "Key only under keyAgreement",
+      "status": "agreed",
+      "issuer_log": "logs/relationships.did.jsonl",
+      "delegation": "delegations/case-3.json",
+      "expected": {
+        "aps": { "state": "valid" },
+        "agent_did": { "result": "rejected", "reason": "wrong_relationship" }
+      }
+    },
+    {
+      "id": "case-4",
+      "title": "Delegation modified after signing (scope changed, delegation_id recomputed)",
+      "status": "agreed",
+      "issuer_log": "logs/relationships.did.jsonl",
+      "delegation": "delegations/case-4.json",
+      "agent_did_exercised": false,
+      "note": "The signature is APS's check. Agent-DID's column only covers which key the DID authorizes, which the tampering does not change.",
+      "expected": {
+        "aps": { "state": "invalid" },
+        "agent_did": { "result": "not_exercised" }
+      }
+    },
+    {
+      "id": "case-5",
+      "title": "Key retired before issued_at",
+      "status": "agreed",
+      "note": "APS column corrected to KEY_AMBIGUOUS by the APS author in #177 (comment 6747421782): the claimed issued_at alone cannot place the signature before or after the retirement.",
+      "issuer_log": "logs/rotated.did.jsonl",
+      "delegation": "delegations/case-5.json",
+      "expected": {
+        "aps": { "state": "indeterminate", "code": "KEY_AMBIGUOUS" },
+        "agent_did": { "result": "rejected", "reason": "key_not_in_did_state" }
+      }
+    },
+    {
+      "id": "case-6",
+      "title": "Key retired after issued_at",
+      "status": "agreed",
+      "issuer_log": "logs/rotated.did.jsonl",
+      "delegation": "delegations/case-6.json",
+      "expected": {
+        "aps": { "state": "indeterminate", "code": "KEY_AMBIGUOUS" },
+        "agent_did": { "result": "indeterminate", "reason": "signing_time_not_established" }
+      }
+    },
+    {
+      "id": "case-7",
+      "title": "DID deactivated after issued_at",
+      "status": "agreed",
+      "note": "KEY_AMBIGUOUS is the APS author's reading of §3.4's general rule; the draft does not address DID deactivation explicitly (#177, comment 6747421782).",
+      "issuer_log": "logs/deactivated.did.jsonl",
+      "delegation": "delegations/case-7.json",
+      "expected": {
+        "aps": { "state": "indeterminate", "code": "KEY_AMBIGUOUS" },
+        "agent_did": { "result": "indeterminate", "reason": "signing_time_not_established" }
+      }
+    },
+    {
+      "id": "case-8",
+      "title": "Key never listed in the issuer's DID",
+      "status": "proposed",
+      "note": "Proposed in #177 (comment 6751947600) so that KEY_NOT_FOUND stays exercised; not yet confirmed by the APS author.",
+      "issuer_log": "logs/relationships.did.jsonl",
+      "delegation": "delegations/case-8.json",
+      "expected": {
+        "aps": { "state": "indeterminate", "code": "KEY_NOT_FOUND" },
+        "agent_did": { "result": "rejected", "reason": "key_not_in_did_state" }
+      }
+    }
+  ]
+}
