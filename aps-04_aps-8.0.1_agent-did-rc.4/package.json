@@ -9,6 +9,7 @@
   },
   "scripts": {
     "generate": "node generate.mjs",
+    "generate:case-9": "node generate-case-9.mjs",
     "test": "node run.mjs"
   },
   "devDependencies": {
