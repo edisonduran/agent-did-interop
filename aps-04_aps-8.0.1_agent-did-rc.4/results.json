@@ -247,7 +247,7 @@
     {
       "id": "case-9",
       "title": "Key added to the issuer's DID after issued_at",
-      "status": "proposed",
+      "status": "agreed",
       "aps": {
         "state": "indeterminate",
         "codes": [

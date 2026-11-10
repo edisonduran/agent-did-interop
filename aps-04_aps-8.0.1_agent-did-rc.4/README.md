@@ -1,6 +1,8 @@
 # APS `AuthorityDelegationV1` × Agent-DID `did:webvh` issuers
 
-**Status: draft, waiting for the APS author to review the APS column.** Cases 1–8 are agreed in [aeoess/agent-governance-vocabulary#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177). Case 9 is proposed. The results below come from the Agent-DID maintainer's run. They do not count as the agreed run until both maintainers have reviewed this directory.
+**Status: cases agreed.** The APS author reviewed this directory at [`bb871e0`](https://github.com/edisonduran/agent-did-interop/tree/bb871e0/aps-04_aps-8.0.1_agent-did-rc.4) (the inputs, `run.mjs` and `results.json`) and agreed with the expected APS outcomes of cases 1–9 in [aeoess/agent-governance-vocabulary#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6772796750). He did not run the suite. His agreement covers the expected APS outcomes. It does not cover a reproduction of the results, or the Agent-DID column, which belongs to the Agent-DID maintainer. The results below come from the Agent-DID maintainer's run and from this repository's CI.
+
+Now that the cases are agreed, this directory no longer changes. A correction, or a new version of any pin, goes into a new directory.
 
 ## Pins
 
@@ -67,7 +69,7 @@ The Agent-DID column does not check the APS signature. That is APS's check.
 | 6 | Key retired after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | indeterminate: signing time not established |
 | 7 | DID deactivated after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | indeterminate: signing time not established |
 | 8 | Key never listed in the issuer's DID | indeterminate, `KEY_NOT_FOUND` | rejected: key not in the DID state at `issued_at` |
-| 9 | Key added to the issuer's DID after `issued_at` (proposed) | indeterminate, `KEY_AMBIGUOUS` | rejected: key not in the DID state at `issued_at` |
+| 9 | Key added to the issuer's DID after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | rejected: key not in the DID state at `issued_at` |
 
 These are the results of `npm test` with the pins above, and they match the expected results in `cases.json`. An APS result matches only if its failure codes are exactly the expected code, or none for a valid chain. `results.json` holds the full output.
 
@@ -79,7 +81,7 @@ Notes on the cases:
   - Agent-DID checks the key at the claimed `issued_at`, and the key isn't in the DID at that time.
   - APS treats the claimed time as unproven, so a retirement anywhere in the log makes the key ambiguous. The APS author corrected this case from `KEY_NOT_FOUND` in [#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6747421782).
 - **Case 7.** `KEY_AMBIGUOUS` is the APS author's reading of §3.4's general rule. The draft does not address DID deactivation explicitly.
-- **Case 9.** The key is in the issuer's log, but only from a version later than the claimed `issued_at`. Nothing in the log is retired or deactivated, so the case isolates the added-later boundary. As in case 5, Agent-DID checks the key at the claimed `issued_at`, while for APS the claimed time cannot rule out a signature made after the key was added ([#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6753745622)).
+- **Case 9.** The key is in the issuer's log, but only from a version later than the claimed `issued_at`. Nothing in the log is retired or deactivated, so the case isolates the added-later boundary. As in case 5, Agent-DID checks the key at the claimed `issued_at`, while for APS the claimed time cannot rule out a signature made after the key was added ([#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6753745622)). The APS author agreed with this outcome in [#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6772796750).
 - **Cases 5–7 and 9, control.** For each indeterminate APS result, `run.mjs` also verifies the record with the key taken from the log, and the result is valid. So the indeterminate outcome comes from the resolver's answer, not from a broken signature.
 
 ## Not exercised
