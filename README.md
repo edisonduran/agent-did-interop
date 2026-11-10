@@ -10,7 +10,7 @@ Each directory is one **pin set**: one fixed version of each specification and i
 
 | Directory | Specification | Implementations | Status |
 |---|---|---|---|
-| [`aps-04_aps-8.0.1_agent-did-rc.4/`](aps-04_aps-8.0.1_agent-did-rc.4/) | [draft-pidlisnyi-aps-04](https://www.ietf.org/archive/id/draft-pidlisnyi-aps-04.html) §4.1–4.3 (`AuthorityDelegationV1`), §3.4 | `agent-passport-system` 8.0.1, `@agentdid/sdk` 1.0.0-rc.4 | Draft: waiting for the APS author to review the APS column |
+| [`aps-04_aps-8.0.1_agent-did-rc.4/`](aps-04_aps-8.0.1_agent-did-rc.4/) | [draft-pidlisnyi-aps-04](https://www.ietf.org/archive/id/draft-pidlisnyi-aps-04.html) §4.1–4.3 (`AuthorityDelegationV1`), §3.4 | `agent-passport-system` 8.0.1, `@agentdid/sdk` 1.0.0-rc.4 | Cases agreed. The APS author reviewed the directory and agreed with the expected APS outcomes of cases 1–9 ([#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6772796750)). He did not run it |
 
 ## Rules
 

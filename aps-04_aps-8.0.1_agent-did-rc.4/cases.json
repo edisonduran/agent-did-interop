@@ -109,8 +109,8 @@
     {
       "id": "case-9",
       "title": "Key added to the issuer's DID after issued_at",
-      "status": "proposed",
-      "note": "Proposed after the APS author's review in #177 (comment 6753745622): the key appears in the issuer's log, but only from a version later than the claimed issued_at, and no retirement or deactivation is involved. Inputs come from generate-case-9.mjs.",
+      "status": "agreed",
+      "note": "Added after the APS author's review in #177 (comment 6753745622) and agreed by him (comment 6772796750): the key appears in the issuer's log, but only from a version later than the claimed issued_at, and no retirement or deactivation is involved. Inputs come from generate-case-9.mjs.",
       "issuer_log": "logs/added.did.jsonl",
       "delegation": "delegations/case-9.json",
       "expected": {
