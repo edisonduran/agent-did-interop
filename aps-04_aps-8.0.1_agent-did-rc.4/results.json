@@ -6,10 +6,11 @@
     "agent_did_rule": "The key named in verification_method is listed under capabilityDelegation in the issuer's DID document at issued_at (RFC-001 §6.2.1)"
   },
   "verification_options": {
-    "now": "2026-11-01T00:00:00.000Z",
+    "now": "2026-12-01T00:00:00.000Z",
     "trust_root": "the root's issuer is the case's issuer DID",
     "resolve_revocation": "active for every record",
-    "signing_time_evidence": "none: no case carries a timestamp or transparency-log entry for the signing time"
+    "signing_time_evidence": "none: no case carries a timestamp or transparency-log entry for the signing time",
+    "log_entries_known_at_now": "every log entry is dated at or before now; run.mjs fails otherwise"
   },
   "results": [
     {
@@ -104,7 +105,8 @@
         ],
         "resolver_answer": "key",
         "expected": {
-          "state": "invalid"
+          "state": "invalid",
+          "code": "SIGNATURE_INVALID"
         },
         "matches_expected": true
       },

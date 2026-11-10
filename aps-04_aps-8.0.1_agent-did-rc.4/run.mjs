@@ -38,6 +38,11 @@ async function loadHistory(path) {
     const r = await resolveDidWebvhLog(text, { did: latest.did, versionNumber: n });
     entries.push({ versionTime: r.metadata.versionTime, deactivated: r.metadata.deactivated, state: r.state });
   }
+  // The verifier runs at `now`, so it can only know log entries dated at or before it.
+  const late = entries.filter((e) => millis(e.versionTime) > millis(spec.verification_options.now));
+  if (late.length > 0) {
+    throw new Error(`${path}: ${late.length} log entry(ies) dated after now (${spec.verification_options.now})`);
+  }
   return { did: latest.did, text, entries };
 }
 
@@ -55,11 +60,12 @@ function timeline(history, id, at) {
 // --- APS column: caller-supplied resolver (§2.5, §3.4) ---------------------------
 //
 // Returns the key as 64 hex characters, or:
-// - { outcome: 'not_found' }  if the key never appears in the issuer's log, or is not
-//   in the DID state at issued_at for a reason other than a retirement;
-// - { outcome: 'ambiguous' }  if the log shows the key retired or the DID deactivated,
-//   at any time: the claimed issued_at alone cannot place the signature on either
-//   side of that boundary (#177, comment 6747421782).
+// - { outcome: 'not_found' }  if the key never appears in the issuer's log;
+// - { outcome: 'ambiguous' }  if the key appears in the log but the claimed issued_at
+//   alone cannot place the signature inside the key's validity: the log shows the key
+//   retired or the DID deactivated at any time (#177, comment 6747421782), or the key
+//   is not in the DID state at issued_at, for example because it was added later
+//   (#177, comment 6753745622).
 //
 // That rule holds because no case carries independent evidence of the signing time.
 // With acceptable evidence (a timestamp, a transparency-log entry), a verifier could
@@ -75,7 +81,7 @@ function apsResolution(history, id, issuedAt) {
   if (retired || deactivated) return { outcome: 'ambiguous' };
   const { effective } = timeline(history, id, issuedAt);
   const method = effective && methodOf(effective.state, id);
-  if (!method) return { outcome: 'not_found' };
+  if (!method) return { outcome: 'ambiguous' };
   return Buffer.from(decodePublicKeyMultibase(method.publicKeyMultibase)).toString('hex');
 }
 
@@ -161,8 +167,10 @@ for (const c of spec.cases) {
     ? { result: 'not_exercised' }
     : await runAgentDid(history, delegation);
 
+  // Codes must match exactly: none for a valid chain, only the expected one otherwise.
+  const expectedCodes = c.expected.aps.code === undefined ? [] : [c.expected.aps.code];
   const apsMatch = aps.state === c.expected.aps.state
-    && (c.expected.aps.code === undefined || aps.codes.includes(c.expected.aps.code));
+    && JSON.stringify(aps.codes) === JSON.stringify(expectedCodes);
   const agentDidMatch = agentDid.result === c.expected.agent_did.result
     && (c.expected.agent_did.reason === undefined || agentDid.reason === c.expected.agent_did.reason);
   if (!apsMatch || !agentDidMatch) mismatches += 1;
