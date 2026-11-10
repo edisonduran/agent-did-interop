@@ -1,6 +1,6 @@
 # APS `AuthorityDelegationV1` × Agent-DID `did:webvh` issuers
 
-**Status: draft, waiting for the APS author to review the APS column.** All eight cases are agreed in [aeoess/agent-governance-vocabulary#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177). The results below come from the Agent-DID maintainer's run. They do not count as the agreed run until both maintainers have reviewed this directory.
+**Status: draft, waiting for the APS author to review the APS column.** Cases 1–8 are agreed in [aeoess/agent-governance-vocabulary#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177). Case 9 is proposed. The results below come from the Agent-DID maintainer's run. They do not count as the agreed run until both maintainers have reviewed this directory.
 
 ## Pins
 
@@ -27,10 +27,11 @@ A valid APS chain alone doesn't show that the DID authorized the key for delegat
 | `logs/relationships.did.jsonl` | Issuer with three keys: `#delegation` under `capabilityDelegation`, `#assertion` under `assertionMethod`, `#key-agreement` under `keyAgreement`. One entry, created 2026-01-01. |
 | `logs/rotated.did.jsonl` | Issuer whose `#key-1` (under `capabilityDelegation`) is replaced by `#key-2` on 2026-03-01. |
 | `logs/deactivated.did.jsonl` | Issuer created 2026-01-01 with `#key-1` under `capabilityDelegation`, then deactivated. The deactivation entry carries the time the fixture was generated, because rc.4 stamps it with the current time. |
+| `logs/added.did.jsonl` | Issuer created 2026-01-01 with `#key-1` under `capabilityDelegation`. On 2026-03-01, `#key-2` is added under `capabilityDelegation` and `#key-1` is kept. |
 | `delegations/case-N.json` | One `AuthorityDelegationV1` root record per case, issued with `issueAuthorityDelegation`. |
 | `cases.json` | Each case's inputs and expected results. |
 
-`generate.mjs` produced these files once. It generates fresh keys and writes no private key. `run.mjs` only reads the committed files.
+`generate.mjs` produced the inputs of cases 1–8 once, and `generate-case-9.mjs` produced those of case 9. Case 9 has its own script so that the inputs of cases 1–8 stay as they were reviewed: `generate.mjs` creates fresh keys on every run. Both scripts generate fresh keys and write no private key. `run.mjs` only reads the committed files.
 
 ## Resolver given to APS
 
@@ -66,6 +67,7 @@ The Agent-DID column does not check the APS signature. That is APS's check.
 | 6 | Key retired after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | indeterminate: signing time not established |
 | 7 | DID deactivated after `issued_at` | indeterminate, `KEY_AMBIGUOUS` | indeterminate: signing time not established |
 | 8 | Key never listed in the issuer's DID | indeterminate, `KEY_NOT_FOUND` | rejected: key not in the DID state at `issued_at` |
+| 9 | Key added to the issuer's DID after `issued_at` (proposed) | indeterminate, `KEY_AMBIGUOUS` | rejected: key not in the DID state at `issued_at` |
 
 These are the results of `npm test` with the pins above, and they match the expected results in `cases.json`. An APS result matches only if its failure codes are exactly the expected code, or none for a valid chain. `results.json` holds the full output.
 
@@ -77,14 +79,14 @@ Notes on the cases:
   - Agent-DID checks the key at the claimed `issued_at`, and the key isn't in the DID at that time.
   - APS treats the claimed time as unproven, so a retirement anywhere in the log makes the key ambiguous. The APS author corrected this case from `KEY_NOT_FOUND` in [#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6747421782).
 - **Case 7.** `KEY_AMBIGUOUS` is the APS author's reading of §3.4's general rule. The draft does not address DID deactivation explicitly.
-- **Cases 5–7, control.** For each indeterminate APS result, `run.mjs` also verifies the record with the key taken from the log, and the result is valid. So the indeterminate outcome comes from the resolver's answer, not from a broken signature.
+- **Case 9.** The key is in the issuer's log, but only from a version later than the claimed `issued_at`. Nothing in the log is retired or deactivated, so the case isolates the added-later boundary. As in case 5, Agent-DID checks the key at the claimed `issued_at`, while for APS the claimed time cannot rule out a signature made after the key was added ([#177](https://github.com/aeoess/agent-governance-vocabulary/issues/177#issuecomment-6753745622)).
+- **Cases 5–7 and 9, control.** For each indeterminate APS result, `run.mjs` also verifies the record with the key taken from the log, and the result is valid. So the indeterminate outcome comes from the resolver's answer, not from a broken signature.
 
 ## Not exercised
 
 - Delegation chains longer than one record. Every case is a root that the trust policy accepts.
 - Revocation. `resolveRevocation` always returns `active`.
 - Signing-time evidence. No case carries a timestamp or transparency-log entry, so a key retirement or a DID deactivation is never resolved in either direction.
-- A key added to the DID after `issued_at`. The resolver answers `ambiguous` for it, but no case uses such a key.
 - Any APS implementation other than the TypeScript 8.0.1 package.
 - The Agent-DID Python SDK.
 - Fetching logs over HTTPS. Logs are read from files.

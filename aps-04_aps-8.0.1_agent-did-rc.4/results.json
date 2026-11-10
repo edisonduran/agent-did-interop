@@ -243,6 +243,36 @@
         },
         "matches_expected": true
       }
+    },
+    {
+      "id": "case-9",
+      "title": "Key added to the issuer's DID after issued_at",
+      "status": "proposed",
+      "aps": {
+        "state": "indeterminate",
+        "codes": [
+          "KEY_AMBIGUOUS"
+        ],
+        "resolver_answer": "ambiguous",
+        "control_with_listed_key": "valid",
+        "expected": {
+          "state": "indeterminate",
+          "code": "KEY_AMBIGUOUS"
+        },
+        "matches_expected": true
+      },
+      "agent_did": {
+        "result": "rejected",
+        "reason": "key_not_in_did_state",
+        "checks": {
+          "log_verified": "sdk: resolveDidWebvhLog"
+        },
+        "expected": {
+          "result": "rejected",
+          "reason": "key_not_in_did_state"
+        },
+        "matches_expected": true
+      }
     }
   ]
 }
